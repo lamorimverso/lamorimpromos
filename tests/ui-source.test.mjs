@@ -72,3 +72,14 @@ test('visual da página segue as medidas da referência com identidade LamorimPr
   assert.match(generator, /Gerar link com desconto/i);
   assert.match(generator, /Colar da área de transferência/i);
 });
+
+test('avatar respeita o basePath do GitHub Pages', async () => {
+  const brand = await read('../components/brand-mark.tsx');
+  const layout = await read('../app/layout.tsx');
+
+  assert.match(brand, /GITHUB_REPOSITORY/);
+  assert.match(brand, /GITHUB_ACTIONS/);
+  assert.doesNotMatch(brand, /src=\"\/lamorimpromos-avatar\.png\"/);
+  assert.match(layout, /GITHUB_REPOSITORY/);
+  assert.match(layout, /GITHUB_ACTIONS/);
+});

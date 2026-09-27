@@ -1,12 +1,19 @@
 import type { Metadata } from 'next';
 import './globals.css';
 
+const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1] ?? '';
+const repositoryOwner = process.env.GITHUB_REPOSITORY?.split('/')[0] ?? '';
+const isGitHubPagesBuild = process.env.GITHUB_ACTIONS === 'true' && Boolean(repositoryName);
+const isUserSite = repositoryName.toLowerCase() === `${repositoryOwner.toLowerCase()}.github.io`;
+const basePath = isGitHubPagesBuild && !isUserSite ? `/${repositoryName}` : '';
+const avatarPath = `${basePath}/lamorimpromos-avatar.png`;
+
 export const metadata: Metadata = {
   title: 'LamorimPromos | Gere seu link com desconto',
   description: 'Converta links de lojas parceiras em links de afiliado do LamorimPromos.',
   icons: {
-    icon: '/lamorimpromos-avatar.png',
-    apple: '/lamorimpromos-avatar.png',
+    icon: avatarPath,
+    apple: avatarPath,
   },
 };
 
