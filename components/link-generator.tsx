@@ -29,6 +29,7 @@ export function LinkGenerator() {
   const [url, setUrl] = useState('');
   const [state, setState] = useState<State>({ status: 'idle' });
   const [recentLinks, setRecentLinks] = useState<RecentLink[]>([]);
+  const [copied, setCopied] = useState(false);
 
   const detected = useMemo(() => (url.trim() ? detectAffiliate(url) : null), [url]);
 
@@ -51,10 +52,8 @@ export function LinkGenerator() {
     }
   }
 
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
-    event.preventDefault();
-
-    const validated = validateInputUrl(url);
+  async function convert(value: string) {
+    const validated = validateInputUrl(value);
     if (!validated.ok) {
       setState({ status: 'error', message: validated.message });
       return;
@@ -66,6 +65,7 @@ export function LinkGenerator() {
       return;
     }
 
+    setCopied(false);
     setState({ status: 'loading' });
 
     try {
@@ -110,10 +110,28 @@ export function LinkGenerator() {
     }
   }
 
+  async function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    event.preventDefault();
+    await convert(url);
+  }
+
+  async function pasteFromClipboard() {
+    try {
+      const value = (await navigator.clipboard.readText()).trim();
+      if (!value) return;
+      setUrl(value);
+      setState({ status: 'idle' });
+    } catch {
+      document.getElementById('product-url')?.focus();
+    }
+  }
+
   async function copyResult() {
     if (state.status !== 'success') return;
     try {
       await navigator.clipboard.writeText(state.finalUrl);
+      setCopied(true);
+      window.setTimeout(() => setCopied(false), 1800);
     } catch {
       // Abrir o link continua disponível se clipboard estiver bloqueado.
     }
@@ -131,40 +149,49 @@ export function LinkGenerator() {
               setUrl(event.target.value);
               if (state.status !== 'idle') setState({ status: 'idle' });
             }}
-            placeholder="Cole aqui o link do produto"
+            placeholder="Cole aqui o link do produto…"
             inputMode="url"
-            autoComplete="url"
-            aria-describedby={detected ? 'detected-store' : undefined}
+            autoComplete="off"
+            autoCorrect="off"
+            autoCapitalize="off"
+            spellCheck={false}
           />
-          {detected ? <span id="detected-store" className="detected-store">{detected.name}</span> : null}
+          <button
+            className="paste-button"
+            type="button"
+            onClick={pasteFromClipboard}
+            title="Colar da área de transferência"
+            aria-label="Colar da área de transferência"
+          >
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+              <rect x="9" y="9" width="13" height="13" rx="2" />
+              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
+            </svg>
+          </button>
         </div>
-        <button type="submit" disabled={state.status === 'loading'}>
-          {state.status === 'loading' ? 'Gerando...' : 'Gerar link'}
+
+        <button className="generate-button" type="submit" disabled={state.status === 'loading'}>
+          {state.status === 'loading' ? (
+            <span className="generate-loading"><span className="spinner" aria-hidden="true" /> Gerando…</span>
+          ) : 'Gerar link com desconto'}
         </button>
       </form>
 
-      {state.status === 'loading' ? (
-        <div className="result-card result-loading" role="status">
-          <span className="spinner" aria-hidden="true" />
-          <p>Convertendo seu link com segurança...</p>
-        </div>
-      ) : null}
-
       {state.status === 'error' || state.status === 'attention' ? (
         <div className={`result-card ${state.status === 'attention' ? 'result-attention' : 'result-error'}`} role="alert">
-          <strong>{state.status === 'attention' ? 'Este link requer atenção' : 'Não foi possível gerar o link'}</strong>
           <p>{state.message}</p>
         </div>
       ) : null}
 
       {state.status === 'success' ? (
         <div className="result-card result-success" aria-live="polite">
-          <strong>Link gerado com sucesso!</strong>
-          <p>{state.message}</p>
-          <div className="result-link-row">
-            <input readOnly value={state.finalUrl} aria-label="Link convertido" />
-            <button type="button" onClick={copyResult}>Copiar</button>
-            <a href={state.finalUrl} target="_blank" rel="noreferrer">Abrir link</a>
+          <strong>✅ Link com desconto gerado!</strong>
+          <a className="result-product-button" href={state.finalUrl} target="_blank" rel="noreferrer">
+            🛍️&nbsp;&nbsp;VER PRODUTO
+          </a>
+          <div className="result-secondary-actions">
+            <button type="button" onClick={copyResult}>{copied ? '✅ Copiado!' : '📋 Copiar link'}</button>
+            <a href={state.finalUrl} target="_blank" rel="noreferrer">↗ Abrir link</a>
           </div>
         </div>
       ) : null}
