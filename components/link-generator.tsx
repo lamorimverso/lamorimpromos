@@ -170,10 +170,16 @@ export function LinkGenerator() {
           </button>
         </div>
 
+        {detected ? (
+          <p className="provider-recognition" role="status">
+            <span aria-hidden="true">✓</span> {detected.name} reconhecida
+          </p>
+        ) : null}
+
         <button className="generate-button" type="submit" disabled={state.status === 'loading'}>
           {state.status === 'loading' ? (
-            <span className="generate-loading"><span className="spinner" aria-hidden="true" /> Gerando…</span>
-          ) : 'Gerar link com desconto'}
+            <span className="generate-loading"><span className="spinner" aria-hidden="true" /> Gerando seu link de afiliado…</span>
+          ) : 'Converter para meu link de afiliado'}
         </button>
       </form>
 
@@ -185,7 +191,7 @@ export function LinkGenerator() {
 
       {state.status === 'success' ? (
         <div className="result-card result-success" aria-live="polite">
-          <strong>✅ Link com desconto gerado!</strong>
+          <strong>✅ Seu link de afiliado está pronto</strong>
           <a className="result-product-button" href={state.finalUrl} target="_blank" rel="noreferrer">
             🛍️&nbsp;&nbsp;VER PRODUTO
           </a>

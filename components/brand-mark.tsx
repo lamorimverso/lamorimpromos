@@ -6,17 +6,19 @@ const basePath = isGitHubPagesBuild && !isUserSite ? `/${repositoryName}` : '';
 
 export function BrandMark() {
   return (
-    <a href="#topo" className="brand-mark" aria-label="LamorimPromos — início">
-      <img
-        src={`${basePath}/lamorimpromos-avatar.png`}
-        alt="LamorimPromos"
-        width={80}
-        height={80}
-        className="brand-avatar"
-      />
+    <a href="#topo" className="brand-mark" aria-label="Lamorim das Promoções — início">
+      <span className="brand-logo-frame" aria-hidden="true">
+        <img
+          src={`${basePath}/lamorimpromos-avatar.png`}
+          alt=""
+          width={112}
+          height={112}
+          className="brand-avatar"
+        />
+      </span>
       <span className="brand-copy">
-        <span className="brand-name">LamorimPromos</span>
-        <span className="site-tagline">Descontos exclusivos para você</span>
+        <span className="brand-name">Lamorim das Promoções</span>
+        <span className="site-tagline">Seu canal de promoções em games, tech, geek e muito mais.</span>
       </span>
     </a>
   );
