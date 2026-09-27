@@ -1,5 +1,5 @@
 import { BrandMark } from '@/components/brand-mark';
-import { LinkGenerator } from '@/components/link-generator';
+import { ToolSwitcher } from '@/components/tool-switcher';
 
 export default function HomePage() {
   return (
@@ -11,14 +11,11 @@ export default function HomePage() {
       </header>
 
       <div className="site-content">
-        <section className="generator-card" aria-labelledby="generator-title">
-          <h2 id="generator-title">Gere seu link com desconto</h2>
-          <LinkGenerator />
-        </section>
+        <ToolSwitcher />
 
         <footer className="site-footer">
           <p>Links de afiliados. Ao usar, você concorda com nossos Termos de Uso.</p>
-          <p>© 2026 LamorimPromos.</p>
+          <p>© 2026 Lamorim das Promoções.</p>
         </footer>
       </div>
     </main>
