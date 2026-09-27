@@ -9,8 +9,8 @@ const basePath = isGitHubPagesBuild && !isUserSite ? `/${repositoryName}` : '';
 const avatarPath = `${basePath}/lamorimpromos-avatar.png`;
 
 export const metadata: Metadata = {
-  title: 'LamorimPromos | Gere seu link com desconto',
-  description: 'Converta links de lojas parceiras em links de afiliado do LamorimPromos.',
+  title: 'Lamorim das Promoções | Gere seu link com desconto',
+  description: 'Seu canal de promoções em games, tech, geek e muito mais. Converta links de lojas parceiras em links de afiliado do Lamorim das Promoções.',
   icons: {
     icon: avatarPath,
     apple: avatarPath,
