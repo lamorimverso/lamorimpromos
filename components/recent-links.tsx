@@ -29,15 +29,6 @@ function providerLabel(provider: string) {
   return labels[provider] || provider || 'Link convertido';
 }
 
-function displayUrl(value: string) {
-  try {
-    const url = new URL(value);
-    return `${url.hostname.replace(/^www\./, '')}${url.pathname === '/' ? '' : url.pathname}`;
-  } catch {
-    return value;
-  }
-}
-
 export function RecentLinks({ items }: Props) {
   async function copy(value: string) {
     try {
@@ -47,6 +38,8 @@ export function RecentLinks({ items }: Props) {
     }
   }
 
+  if (items.length === 0) return null;
+
   return (
     <section className="recent-section" aria-labelledby="recent-title">
       <div className="recent-heading">
@@ -54,24 +47,20 @@ export function RecentLinks({ items }: Props) {
         <span>{items.length} {items.length === 1 ? 'link' : 'links'}</span>
       </div>
 
-      {items.length === 0 ? (
-        <p className="recent-empty">Seus links convertidos nesta sessão aparecerão aqui.</p>
-      ) : (
-        <div className="recent-list">
-          {items.map((item) => (
-            <article className="recent-item" key={`${item.finalUrl}-${item.timestamp}`}>
-              <div className="recent-copy">
-                <strong>{providerLabel(item.provider)}</strong>
-                <span title={item.finalUrl}>{displayUrl(item.finalUrl)}</span>
-              </div>
+      <div className="recent-list">
+        {items.map((item) => (
+          <article className="recent-item" key={`${item.finalUrl}-${item.timestamp}`}>
+            <div className="recent-thumb" aria-hidden="true">🛍️</div>
+            <div className="recent-copy">
+              <strong>{providerLabel(item.provider)}</strong>
               <div className="recent-actions">
-                <button type="button" onClick={() => copy(item.finalUrl)}>Copiar</button>
                 <a href={item.finalUrl} target="_blank" rel="noreferrer">Ver produto</a>
+                <button type="button" onClick={() => copy(item.finalUrl)}>Copiar</button>
               </div>
-            </article>
-          ))}
-        </div>
-      )}
+            </div>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }

@@ -12,8 +12,9 @@ async function read(path) {
 
 test('página segue a composição enxuta da referência', async () => {
   const source = await read('../app/page.tsx');
-  assert.match(source, /LamorimPromos/);
-  assert.match(source, /Descontos exclusivos para você/i);
+  const brand = await read('../components/brand-mark.tsx');
+  assert.match(brand, /LamorimPromos/);
+  assert.match(brand, /Descontos exclusivos para você/i);
   assert.match(source, /Gere seu link com desconto/i);
   assert.match(source, /LinkGenerator/);
   assert.match(source, /Links de afiliados/i);
@@ -50,4 +51,35 @@ test('layout permanece responsivo sem hero escuro da V1', async () => {
   assert.doesNotMatch(page, /bg-\[#07111f\]/);
   assert.match(css, /max-width/);
   assert.match(css, /@media/);
+});
+
+test('visual da página segue as medidas da referência com identidade LamorimPromos', async () => {
+  const page = await read('../app/page.tsx');
+  const brand = await read('../components/brand-mark.tsx');
+  const generator = await read('../components/link-generator.tsx');
+  const css = await read('../app/globals.css');
+
+  assert.match(brand, /lamorimpromos-avatar\.png/);
+  assert.match(brand, /80/);
+  assert.match(page, /site-hero/);
+  assert.match(page, /site-content/);
+  assert.match(css, /font-family:\s*Poppins/);
+  assert.match(css, /max-width:\s*540px/);
+  assert.match(css, /border-radius:\s*0\s+0\s+20px\s+20px/);
+  assert.match(css, /border-radius:\s*20px/);
+  assert.match(css, /padding:\s*24px/);
+  assert.match(css, /#24bc88/i);
+  assert.match(generator, /Gerar link com desconto/i);
+  assert.match(generator, /Colar da área de transferência/i);
+});
+
+test('avatar respeita o basePath do GitHub Pages', async () => {
+  const brand = await read('../components/brand-mark.tsx');
+  const layout = await read('../app/layout.tsx');
+
+  assert.match(brand, /GITHUB_REPOSITORY/);
+  assert.match(brand, /GITHUB_ACTIONS/);
+  assert.doesNotMatch(brand, /src=\"\/lamorimpromos-avatar\.png\"/);
+  assert.match(layout, /GITHUB_REPOSITORY/);
+  assert.match(layout, /GITHUB_ACTIONS/);
 });

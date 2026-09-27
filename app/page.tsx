@@ -4,17 +4,15 @@ import { LinkGenerator } from '@/components/link-generator';
 export default function HomePage() {
   return (
     <main id="topo" className="site-page">
-      <div className="site-shell">
-        <header className="site-header">
+      <header className="site-hero">
+        <div className="site-hero-inner">
           <BrandMark />
-          <p className="site-tagline">Descontos exclusivos para você</p>
-        </header>
+        </div>
+      </header>
 
-        <section className="generator-section" aria-labelledby="generator-title">
-          <h1 id="generator-title">Gere seu link com desconto</h1>
-          <p className="generator-help">
-            Cole um link válido de uma loja parceira do LamorimPromos.
-          </p>
+      <div className="site-content">
+        <section className="generator-card" aria-labelledby="generator-title">
+          <h2 id="generator-title">Gere seu link com desconto</h2>
           <LinkGenerator />
         </section>
 
