@@ -13,10 +13,11 @@ async function read(path) {
 test('página segue a composição enxuta da referência', async () => {
   const source = await read('../app/page.tsx');
   const brand = await read('../components/brand-mark.tsx');
-  assert.match(brand, /LamorimPromos/);
-  assert.match(brand, /Descontos exclusivos para você/i);
-  assert.match(source, /Gere seu link com desconto/i);
-  assert.match(source, /LinkGenerator/);
+  assert.match(brand, /Lamorim das Promoções/);
+  assert.match(brand, /Seu canal de promoções em games, tech, geek e muito mais\./i);
+  assert.match(source, /ToolSwitcher/);
+  const switcher = await read('../components/tool-switcher.tsx');
+  assert.match(switcher, /LinkGenerator/);
   assert.match(source, /Links de afiliados/i);
   assert.doesNotMatch(source, /AffiliateGrid/);
   assert.doesNotMatch(source, /Lojas compatíveis/i);
@@ -45,10 +46,11 @@ test('recentes recebe apenas dados reais e oferece copiar/abrir', async () => {
   assert.doesNotMatch(source, /Demonstração/i);
 });
 
-test('layout permanece responsivo sem hero escuro da V1', async () => {
-  const page = await read('../app/page.tsx');
+test('layout permanece responsivo em modo escuro com identidade própria', async () => {
   const css = await read('../app/globals.css');
-  assert.doesNotMatch(page, /bg-\[#07111f\]/);
+  assert.match(css, /color-scheme:\s*dark/);
+  assert.match(css, /--page:\s*#0b0f14/i);
+  assert.match(css, /--surface:\s*#121820/i);
   assert.match(css, /max-width/);
   assert.match(css, /@media/);
 });
@@ -60,7 +62,9 @@ test('visual da página segue as medidas da referência com identidade LamorimPr
   const css = await read('../app/globals.css');
 
   assert.match(brand, /lamorimpromos-avatar\.png/);
-  assert.match(brand, /80/);
+  assert.match(brand, /112/);
+  assert.match(css, /object-fit:\s*contain/);
+  assert.doesNotMatch(css, /brand-avatar[\s\S]{0,180}border-radius:\s*999px/);
   assert.match(page, /site-hero/);
   assert.match(page, /site-content/);
   assert.match(css, /font-family:\s*Poppins/);
@@ -69,7 +73,7 @@ test('visual da página segue as medidas da referência com identidade LamorimPr
   assert.match(css, /border-radius:\s*20px/);
   assert.match(css, /padding:\s*24px/);
   assert.match(css, /#24bc88/i);
-  assert.match(generator, /Gerar link com desconto/i);
+  assert.match(generator, /Converter para meu link de afiliado/i);
   assert.match(generator, /Colar da área de transferência/i);
 });
 
@@ -82,4 +86,45 @@ test('avatar respeita o basePath do GitHub Pages', async () => {
   assert.doesNotMatch(brand, /src=\"\/lamorimpromos-avatar\.png\"/);
   assert.match(layout, /GITHUB_REPOSITORY/);
   assert.match(layout, /GITHUB_ACTIONS/);
+});
+
+test('metadados usam o nome completo da marca', async () => {
+  const layout = await read('../app/layout.tsx');
+  const page = await read('../app/page.tsx');
+  assert.match(layout, /Lamorim das Promoções/);
+  assert.match(layout, /Seu canal de promoções em games, tech, geek e muito mais\./i);
+  assert.match(page, /© 2026 Lamorim das Promoções/);
+});
+
+test('navegação principal usa abas Gerar link e Alertas com semântica acessível', async () => {
+  const page = await read('../app/page.tsx');
+  const switcher = await read('../components/tool-switcher.tsx');
+  assert.match(page, /ToolSwitcher/);
+  assert.match(switcher, /role="tablist"/);
+  assert.match(switcher, /role="tab"/);
+  assert.match(switcher, /aria-selected/);
+  assert.match(switcher, /🔗/);
+  assert.match(switcher, /Gerar link/);
+  assert.match(switcher, /🔔/);
+  assert.match(switcher, /Alertas/);
+  assert.match(switcher, /useState<'links' \| 'alerts'>\('links'\)/);
+  assert.match(switcher, /role="tabpanel"/);
+});
+
+test('gerador comunica conversão para o link de afiliado e loja reconhecida', async () => {
+  const generator = await read('../components/link-generator.tsx');
+  assert.match(generator, /Converter para meu link de afiliado/i);
+  assert.match(generator, /reconhecida/i);
+  assert.match(generator, /Seu link de afiliado está pronto/i);
+  assert.match(generator, /safe_to_publish|normalizePublicConversionResponse/);
+});
+
+test('aba Alertas é uma prévia visual separada e não finge integração ativa', async () => {
+  const alerts = await read('../components/alerts-panel.tsx');
+  assert.match(alerts, /O que você quer acompanhar\?/i);
+  assert.match(alerts, /PlayStation 5/i);
+  assert.match(alerts, /RTX 5070/i);
+  assert.match(alerts, /Prévia do módulo/i);
+  assert.match(alerts, /disabled/);
+  assert.doesNotMatch(alerts, /fetch\(/);
 });
