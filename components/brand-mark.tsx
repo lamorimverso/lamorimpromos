@@ -17,7 +17,6 @@ export function BrandMark() {
         />
       </span>
       <span className="brand-copy">
-        <span className="brand-eyebrow">Games • Tech • Geek • Ofertas</span>
         <span className="brand-name">Lamorim das Promoções</span>
         <span className="site-tagline">Seu canal de promoções em games, tech, geek e muito mais.</span>
       </span>
