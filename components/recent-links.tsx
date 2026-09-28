@@ -38,29 +38,41 @@ export function RecentLinks({ items }: Props) {
     }
   }
 
-  if (items.length === 0) return null;
-
   return (
     <section className="recent-section" aria-labelledby="recent-title">
       <div className="recent-heading">
-        <h2 id="recent-title">Recentes</h2>
+        <div>
+          <span className="section-kicker">Sua sessão</span>
+          <h2 id="recent-title">Links recentes</h2>
+        </div>
         <span>{items.length} {items.length === 1 ? 'link' : 'links'}</span>
       </div>
 
-      <div className="recent-list">
-        {items.map((item) => (
-          <article className="recent-item" key={`${item.finalUrl}-${item.timestamp}`}>
-            <div className="recent-thumb" aria-hidden="true">🛍️</div>
-            <div className="recent-copy">
-              <strong>{providerLabel(item.provider)}</strong>
-              <div className="recent-actions">
-                <a href={item.finalUrl} target="_blank" rel="noreferrer">Ver produto</a>
-                <button type="button" onClick={() => copy(item.finalUrl)}>Copiar</button>
+      {items.length === 0 ? (
+        <div className="recent-empty">
+          <span className="recent-empty-icon" aria-hidden="true">↗</span>
+          <div>
+            <strong>Nenhum link convertido nesta sessão ainda.</strong>
+            <p>Quando você gerar um link afiliado válido, ele aparecerá aqui para copiar ou abrir novamente.</p>
+          </div>
+        </div>
+      ) : (
+        <div className="recent-list">
+          {items.map((item) => (
+            <article className="recent-item" key={`${item.finalUrl}-${item.timestamp}`}>
+              <div className="recent-thumb" aria-hidden="true">🛍️</div>
+              <div className="recent-copy">
+                <strong>{providerLabel(item.provider)}</strong>
+                <span className="recent-url">{item.finalUrl}</span>
+                <div className="recent-actions">
+                  <a href={item.finalUrl} target="_blank" rel="noreferrer">Abrir oferta</a>
+                  <button type="button" onClick={() => copy(item.finalUrl)}>Copiar</button>
+                </div>
               </div>
-            </div>
-          </article>
-        ))}
-      </div>
+            </article>
+          ))}
+        </div>
+      )}
     </section>
   );
 }

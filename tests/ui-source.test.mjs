@@ -10,19 +10,17 @@ async function read(path) {
   }
 }
 
-test('página segue a composição enxuta da referência', async () => {
+test('página mantém marca e ferramentas principais sem cards institucionais excessivos', async () => {
   const source = await read('../app/page.tsx');
   const brand = await read('../components/brand-mark.tsx');
+  const switcher = await read('../components/tool-switcher.tsx');
   assert.match(brand, /Lamorim das Promoções/);
   assert.match(brand, /Seu canal de promoções em games, tech, geek e muito mais\./i);
   assert.match(source, /ToolSwitcher/);
-  const switcher = await read('../components/tool-switcher.tsx');
   assert.match(switcher, /LinkGenerator/);
   assert.match(source, /Links de afiliados/i);
   assert.doesNotMatch(source, /AffiliateGrid/);
-  assert.doesNotMatch(source, /Lojas compatíveis/i);
   assert.doesNotMatch(source, /MODELO V1/i);
-  assert.doesNotMatch(source, /Próxima etapa/i);
 });
 
 test('gerador usa endpoint público configurável e estados reais de conversão', async () => {
@@ -37,53 +35,39 @@ test('gerador usa endpoint público configurável e estados reais de conversão'
   assert.doesNotMatch(source, /demonstração/i);
 });
 
-test('recentes recebe apenas dados reais e oferece copiar/abrir', async () => {
+test('recentes permanece visível mesmo vazio e oferece copiar/abrir quando houver dados', async () => {
   const source = await read('../components/recent-links.tsx');
   assert.match(source, /items/);
+  assert.match(source, /Links recentes/i);
+  assert.match(source, /Nenhum link convertido nesta sessão ainda/i);
   assert.match(source, /Copiar/i);
-  assert.match(source, /Ver produto/i);
+  assert.match(source, /Abrir oferta|Ver produto/i);
+  assert.doesNotMatch(source, /if\s*\(items\.length\s*===\s*0\)\s*return\s+null/);
   assert.doesNotMatch(source, /RECENT\s*=/);
-  assert.doesNotMatch(source, /Demonstração/i);
 });
 
-test('layout permanece responsivo em modo escuro com identidade própria', async () => {
+test('layout usa identidade dark com largura fluida e não fica preso em 540px', async () => {
   const css = await read('../app/globals.css');
   assert.match(css, /color-scheme:\s*dark/);
   assert.match(css, /--page:\s*#0b0f14/i);
   assert.match(css, /--surface:\s*#121820/i);
-  assert.match(css, /max-width/);
+  assert.match(css, /--content-width:\s*min\(/i);
+  assert.match(css, /680px/);
+  assert.doesNotMatch(css, /max-width:\s*540px/);
   assert.match(css, /@media/);
 });
 
-test('visual da página segue as medidas da referência com identidade LamorimPromos', async () => {
-  const page = await read('../app/page.tsx');
+test('marca usa a arte completa e mantém o basePath do GitHub Pages', async () => {
   const brand = await read('../components/brand-mark.tsx');
-  const generator = await read('../components/link-generator.tsx');
   const css = await read('../app/globals.css');
-
-  assert.match(brand, /lamorimpromos-avatar\.png/);
-  assert.match(brand, /112/);
-  assert.match(css, /object-fit:\s*contain/);
-  assert.doesNotMatch(css, /brand-avatar[\s\S]{0,180}border-radius:\s*999px/);
-  assert.match(page, /site-hero/);
-  assert.match(page, /site-content/);
-  assert.match(css, /font-family:\s*Poppins/);
-  assert.match(css, /max-width:\s*540px/);
-  assert.match(css, /border-radius:\s*0\s+0\s+20px\s+20px/);
-  assert.match(css, /border-radius:\s*20px/);
-  assert.match(css, /padding:\s*24px/);
-  assert.match(css, /#24bc88/i);
-  assert.match(generator, /Converter para meu link de afiliado/i);
-  assert.match(generator, /Colar da área de transferência/i);
-});
-
-test('avatar respeita o basePath do GitHub Pages', async () => {
-  const brand = await read('../components/brand-mark.tsx');
   const layout = await read('../app/layout.tsx');
 
+  assert.match(brand, /lamorimpromos-brand\.png/);
   assert.match(brand, /GITHUB_REPOSITORY/);
   assert.match(brand, /GITHUB_ACTIONS/);
-  assert.doesNotMatch(brand, /src=\"\/lamorimpromos-avatar\.png\"/);
+  assert.match(css, /object-fit:\s*contain/);
+  assert.match(css, /brand-art/);
+  assert.doesNotMatch(brand, /lamorimpromos-avatar\.png/);
   assert.match(layout, /GITHUB_REPOSITORY/);
   assert.match(layout, /GITHUB_ACTIONS/);
 });
@@ -111,20 +95,38 @@ test('navegação principal usa abas Gerar link e Alertas com semântica acessí
   assert.match(switcher, /role="tabpanel"/);
 });
 
-test('gerador comunica conversão para o link de afiliado e loja reconhecida', async () => {
+test('troca de ferramenta tem movimento sutil e respeita redução de movimento', async () => {
+  const css = await read('../app/globals.css');
+  assert.match(css, /@keyframes\s+panel-enter/i);
+  assert.match(css, /animation:\s*panel-enter/i);
+  assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/i);
+});
+
+test('gerador comunica conversão afiliada, lojas e fluxo em três passos', async () => {
   const generator = await read('../components/link-generator.tsx');
+  const switcher = await read('../components/tool-switcher.tsx');
   assert.match(generator, /Converter para meu link de afiliado/i);
   assert.match(generator, /reconhecida/i);
   assert.match(generator, /Seu link de afiliado está pronto/i);
   assert.match(generator, /safe_to_publish|normalizePublicConversionResponse/);
+  assert.match(switcher, /Lojas compatíveis/i);
+  assert.match(switcher, /Como funciona/i);
+  assert.match(switcher, /Cole o link/i);
+  assert.match(switcher, /Nós convertemos/i);
+  assert.match(switcher, /Pronto para divulgar/i);
 });
 
-test('aba Alertas é uma prévia visual separada e não finge integração ativa', async () => {
+test('aba Alertas parece produto completo sem fingir backend ativo', async () => {
   const alerts = await read('../components/alerts-panel.tsx');
-  assert.match(alerts, /O que você quer acompanhar\?/i);
+  assert.match(alerts, /Alertas de promoções/i);
+  assert.match(alerts, /O que você quer monitorar\?/i);
   assert.match(alerts, /PlayStation 5/i);
   assert.match(alerts, /RTX 5070/i);
-  assert.match(alerts, /Prévia do módulo/i);
-  assert.match(alerts, /disabled/);
+  assert.match(alerts, /Filtros avançados/i);
+  assert.match(alerts, /Seus alertas/i);
+  assert.match(alerts, /Nenhum alerta criado ainda/i);
+  assert.match(alerts, /Integração Telegram:\s*em breve/i);
+  assert.doesNotMatch(alerts, /Prévia do módulo/i);
+  assert.doesNotMatch(alerts, /Em preparação/i);
   assert.doesNotMatch(alerts, /fetch\(/);
 });
