@@ -1,6 +1,6 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import './task-first.css';
+import './editorial-utility.css';
 
 const repositoryName = process.env.GITHUB_REPOSITORY?.split('/')[1] ?? '';
 const repositoryOwner = process.env.GITHUB_REPOSITORY?.split('/')[0] ?? '';
