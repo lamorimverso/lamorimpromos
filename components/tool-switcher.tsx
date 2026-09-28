@@ -48,7 +48,7 @@ export function ToolSwitcher() {
           onClick={() => setActiveTool('links')}
           onKeyDown={handleTabKeyDown}
         >
-          <span aria-hidden="true">🔗</span> Gerar link
+          Gerar link
         </button>
         <button
           id="tab-alerts"
@@ -61,7 +61,7 @@ export function ToolSwitcher() {
           onClick={() => setActiveTool('alerts')}
           onKeyDown={handleTabKeyDown}
         >
-          <span aria-hidden="true">🔔</span> Alertas
+          Alertas
         </button>
       </div>
 
@@ -69,47 +69,28 @@ export function ToolSwitcher() {
         <div id="panel-links" className="tool-panel" role="tabpanel" aria-labelledby="tab-links">
           <div className="task-primary">
             <div className="tool-heading link-tool-heading">
-              <span className="tool-kicker">Gerar link</span>
-              <h2>Transforme seu link em afiliado</h2>
-              <p>Cole o link de uma loja compatível. Nós identificamos a origem, processamos a conversão e só liberamos o resultado depois da validação.</p>
+              <h2>Gerar link de afiliado</h2>
+              <p>Cole o link de uma loja compatível.</p>
             </div>
 
             <LinkGenerator />
           </div>
 
           <section className="partner-section" aria-labelledby="partners-title">
-            <div className="section-heading-inline">
-              <span className="section-kicker">Compatibilidade</span>
-              <h3 id="partners-title">Lojas compatíveis</h3>
-            </div>
+            <h3 id="partners-title">Lojas compatíveis</h3>
             <div className="partner-strip" aria-label="Lojas compatíveis com o conversor">
               {partners.map((partner) => <span key={partner}>{partner}</span>)}
             </div>
           </section>
 
-          <section className="flow-section" aria-labelledby="flow-title">
-            <div className="section-heading-inline">
-              <span className="section-kicker">Fluxo rápido</span>
-              <h3 id="flow-title">Como funciona</h3>
-            </div>
-            <div className="flow-grid">
-              <article className="flow-step">
-                <span>01</span>
-                <strong>Cole</strong>
-                <p>Cole o link do produto de uma loja compatível.</p>
-              </article>
-              <article className="flow-step">
-                <span>02</span>
-                <strong>Convertemos</strong>
-                <p>Nós convertemos e validamos o seu link de afiliado.</p>
-              </article>
-              <article className="flow-step">
-                <span>03</span>
-                <strong>Copie</strong>
-                <p>Pronto para divulgar: copie o resultado e publique.</p>
-              </article>
-            </div>
-          </section>
+          <details className="how-it-works">
+            <summary>Como funciona</summary>
+            <ol>
+              <li><strong>Cole</strong> o link do produto.</li>
+              <li><strong>Convertemos</strong> para o seu afiliado.</li>
+              <li><strong>Copie</strong> o resultado e publique.</li>
+            </ol>
+          </details>
         </div>
       ) : (
         <div id="panel-alerts" className="tool-panel" role="tabpanel" aria-labelledby="tab-alerts">
