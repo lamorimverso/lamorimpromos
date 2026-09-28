@@ -155,6 +155,7 @@ export function LinkGenerator() {
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck={false}
+            aria-describedby="link-assurance"
           />
           <button
             className="paste-button"
@@ -181,6 +182,10 @@ export function LinkGenerator() {
             <span className="generate-loading"><span className="spinner" aria-hidden="true" /> Gerando seu link de afiliado…</span>
           ) : 'Converter para meu link de afiliado'}
         </button>
+
+        <p className="task-assurance" id="link-assurance">
+          <span aria-hidden="true">✓</span> Só liberamos links validados e prontos para publicação.
+        </p>
       </form>
 
       {state.status === 'error' || state.status === 'attention' ? (
@@ -191,7 +196,10 @@ export function LinkGenerator() {
 
       {state.status === 'success' ? (
         <div className="result-card result-success" aria-live="polite">
-          <strong>✅ Seu link de afiliado está pronto</strong>
+          <div className="result-success-heading">
+            <strong>✅ Seu link de afiliado está pronto</strong>
+            <span>✓ Validado para publicação</span>
+          </div>
           <a className="result-product-button" href={state.finalUrl} target="_blank" rel="noreferrer">
             🛍️&nbsp;&nbsp;VER PRODUTO
           </a>

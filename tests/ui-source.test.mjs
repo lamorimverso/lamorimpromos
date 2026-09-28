@@ -91,7 +91,7 @@ test('navegação principal usa abas Gerar link e Alertas com semântica acessí
   assert.match(switcher, /Gerar link/);
   assert.match(switcher, /🔔/);
   assert.match(switcher, /Alertas/);
-  assert.match(switcher, /useState<'links' \| 'alerts'>\('links'\)/);
+  assert.match(switcher, /useState<Tool>\('links'\)/);
   assert.match(switcher, /role="tabpanel"/);
 });
 
@@ -129,4 +129,26 @@ test('aba Alertas parece produto completo sem fingir backend ativo', async () =>
   assert.doesNotMatch(alerts, /Prévia do módulo/i);
   assert.doesNotMatch(alerts, /Em preparação/i);
   assert.doesNotMatch(alerts, /fetch\(/);
+});
+
+test('UX task-first oferece navegação por teclado, microcopy de confiança e fluxo simplificado', async () => {
+  const switcher = await read('../components/tool-switcher.tsx');
+  const generator = await read('../components/link-generator.tsx');
+  const css = await read('../app/task-first.css');
+  const layout = await read('../app/layout.tsx');
+
+  assert.match(switcher, /task-primary/);
+  assert.match(switcher, /onKeyDown/);
+  assert.match(switcher, /ArrowRight/);
+  assert.match(switcher, /ArrowLeft/);
+  assert.match(switcher, /Home/);
+  assert.match(switcher, /End/);
+  assert.match(switcher, /Cole/i);
+  assert.match(switcher, /Convertemos/i);
+  assert.match(switcher, /Copie/i);
+  assert.match(generator, /Só liberamos links validados/i);
+  assert.match(generator, /Validado para publicação/i);
+  assert.match(css, /\.task-primary/);
+  assert.match(css, /\.task-assurance/);
+  assert.match(layout, /task-first\.css/);
 });
