@@ -39,7 +39,7 @@ test('recentes permanece visível mesmo vazio e oferece copiar/abrir quando houv
   const source = await read('../components/recent-links.tsx');
   assert.match(source, /items/);
   assert.match(source, /Links recentes/i);
-  assert.match(source, /Nenhum link convertido nesta sessão ainda/i);
+  assert.match(source, /Nenhum link gerado ainda/i);
   assert.match(source, /Copiar/i);
   assert.match(source, /Abrir oferta|Abrir produto/i);
   assert.doesNotMatch(source, /if\s*\(items\.length\s*===\s*0\)\s*return\s+null/);
@@ -111,7 +111,7 @@ test('gerador prioriza linguagem direta e remove microcopy com cara de template'
 
   assert.match(switcher, /Gerar link de afiliado/i);
   assert.match(switcher, /Cole o link de uma loja compatível\./i);
-  assert.match(generator, />Gerar link</);
+  assert.match(generator, /'Gerar link'/);
   assert.match(generator, /reconhecida/i);
   assert.match(generator, /Link gerado/i);
   assert.match(generator, /Copiar link/i);
