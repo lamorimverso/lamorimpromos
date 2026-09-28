@@ -4,12 +4,9 @@ export function AlertsPanel() {
   return (
     <div className="alerts-preview">
       <div className="tool-heading alerts-heading">
-        <div className="alerts-title-row">
-          <span className="tool-kicker">Monitoramento inteligente</span>
-          <span className="telegram-badge"><span aria-hidden="true">●</span> Integração Telegram: em breve</span>
-        </div>
         <h2>Alertas de promoções</h2>
-        <p>Monitore produtos e termos importantes. A estrutura já está pronta para receber as ofertas que depois serão processadas pelo Lamorim das Promoções.</p>
+        <p>Escolha o que você quer acompanhar.</p>
+        <p className="integration-note">Telegram: integração em breve.</p>
       </div>
 
       <div className="alert-composer" aria-labelledby="alert-question">
@@ -18,13 +15,13 @@ export function AlertsPanel() {
           <input
             id="alert-preview-input"
             type="text"
-            placeholder="Ex.: PlayStation 5, RTX 5070"
+            placeholder="Ex.: PlayStation 5"
             disabled
             aria-describedby="alert-preview-help"
           />
-          <button type="button" disabled aria-label="Adicionar alerta">+</button>
+          <button type="button" disabled aria-label="Adicionar alerta">Adicionar</button>
         </div>
-        <p id="alert-preview-help">A criação real será ativada na etapa de integração com Telegram.</p>
+        <p id="alert-preview-help">A criação será liberada quando a integração com Telegram estiver conectada.</p>
       </div>
 
       <div className="alert-examples" aria-label="Sugestões de alertas">
@@ -38,11 +35,11 @@ export function AlertsPanel() {
         <summary>Filtros avançados</summary>
         <div className="advanced-filter-grid">
           <div>
-            <span className="filter-label positive">+ Deve conter</span>
+            <span className="filter-label positive">Deve conter</span>
             <p>slim, digital, 1TB</p>
           </div>
           <div>
-            <span className="filter-label negative">− Ignorar</span>
+            <span className="filter-label negative">Ignorar</span>
             <p>usado, recondicionado</p>
           </div>
         </div>
@@ -50,18 +47,12 @@ export function AlertsPanel() {
 
       <section className="alerts-list" aria-labelledby="alerts-list-title">
         <div className="alerts-list-heading">
-          <div>
-            <span className="section-kicker">Monitoramento</span>
-            <h3 id="alerts-list-title">Seus alertas</h3>
-          </div>
+          <h3 id="alerts-list-title">Seus alertas</h3>
           <span>0 ativos</span>
         </div>
         <div className="alert-empty-state">
-          <span className="alert-empty-icon" aria-hidden="true">🔔</span>
-          <div>
-            <strong>Nenhum alerta criado ainda</strong>
-            <p>Depois da integração com Telegram, seus termos monitorados, quantidade de ofertas e histórico aparecerão aqui.</p>
-          </div>
+          <strong>Nenhum alerta criado ainda.</strong>
+          <p>Quando a integração estiver ativa, seus alertas aparecerão aqui.</p>
         </div>
       </section>
     </div>

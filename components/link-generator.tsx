@@ -133,14 +133,14 @@ export function LinkGenerator() {
       setCopied(true);
       window.setTimeout(() => setCopied(false), 1800);
     } catch {
-      // Abrir o link continua disponível se clipboard estiver bloqueado.
+      // Abrir o produto continua disponível se o clipboard estiver bloqueado.
     }
   }
 
   return (
     <>
       <form onSubmit={handleSubmit} className="link-form" noValidate>
-        <label className="sr-only" htmlFor="product-url">Link do produto</label>
+        <label className="field-label" htmlFor="product-url">Link do produto</label>
         <div className="link-input-wrap">
           <input
             id="product-url"
@@ -149,43 +149,29 @@ export function LinkGenerator() {
               setUrl(event.target.value);
               if (state.status !== 'idle') setState({ status: 'idle' });
             }}
-            placeholder="Cole aqui o link do produto…"
+            placeholder="https://..."
             inputMode="url"
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck={false}
-            aria-describedby="link-assurance"
           />
           <button
             className="paste-button"
             type="button"
             onClick={pasteFromClipboard}
-            title="Colar da área de transferência"
-            aria-label="Colar da área de transferência"
           >
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <rect x="9" y="9" width="13" height="13" rx="2" />
-              <path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1" />
-            </svg>
+            Colar
           </button>
         </div>
 
         {detected ? (
-          <p className="provider-recognition" role="status">
-            <span aria-hidden="true">✓</span> {detected.name} reconhecida
-          </p>
+          <p className="provider-recognition" role="status">{detected.name} reconhecida</p>
         ) : null}
 
         <button className="generate-button" type="submit" disabled={state.status === 'loading'}>
-          {state.status === 'loading' ? (
-            <span className="generate-loading"><span className="spinner" aria-hidden="true" /> Gerando seu link de afiliado…</span>
-          ) : 'Converter para meu link de afiliado'}
+          {state.status === 'loading' ? 'Gerando…' : 'Gerar link'}
         </button>
-
-        <p className="task-assurance" id="link-assurance">
-          <span aria-hidden="true">✓</span> Só liberamos links validados e prontos para publicação.
-        </p>
       </form>
 
       {state.status === 'error' || state.status === 'attention' ? (
@@ -196,16 +182,12 @@ export function LinkGenerator() {
 
       {state.status === 'success' ? (
         <div className="result-card result-success" aria-live="polite">
-          <div className="result-success-heading">
-            <strong>✅ Seu link de afiliado está pronto</strong>
-            <span>✓ Validado para publicação</span>
-          </div>
-          <a className="result-product-button" href={state.finalUrl} target="_blank" rel="noreferrer">
-            🛍️&nbsp;&nbsp;VER PRODUTO
-          </a>
-          <div className="result-secondary-actions">
-            <button type="button" onClick={copyResult}>{copied ? '✅ Copiado!' : '📋 Copiar link'}</button>
-            <a href={state.finalUrl} target="_blank" rel="noreferrer">↗ Abrir link</a>
+          <strong>Link gerado</strong>
+          <span className="result-provider">{state.provider || 'Link de afiliado'}</span>
+          <code className="result-url">{state.finalUrl}</code>
+          <div className="result-actions">
+            <button type="button" onClick={copyResult}>{copied ? 'Copiado' : 'Copiar link'}</button>
+            <a href={state.finalUrl} target="_blank" rel="noreferrer">Abrir produto ↗</a>
           </div>
         </div>
       ) : null}

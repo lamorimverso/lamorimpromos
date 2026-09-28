@@ -39,9 +39,9 @@ test('recentes permanece visível mesmo vazio e oferece copiar/abrir quando houv
   const source = await read('../components/recent-links.tsx');
   assert.match(source, /items/);
   assert.match(source, /Links recentes/i);
-  assert.match(source, /Nenhum link convertido nesta sessão ainda/i);
+  assert.match(source, /Nenhum link gerado ainda/i);
   assert.match(source, /Copiar/i);
-  assert.match(source, /Abrir oferta|Ver produto/i);
+  assert.match(source, /Abrir oferta|Abrir produto/i);
   assert.doesNotMatch(source, /if\s*\(items\.length\s*===\s*0\)\s*return\s+null/);
   assert.doesNotMatch(source, /RECENT\s*=/);
 });
@@ -80,43 +80,72 @@ test('metadados usam o nome completo da marca', async () => {
   assert.match(page, /© 2026 Lamorim das Promoções/);
 });
 
-test('navegação principal usa abas Gerar link e Alertas com semântica acessível', async () => {
+test('navegação principal usa abas acessíveis sem emojis decorativos', async () => {
   const page = await read('../app/page.tsx');
   const switcher = await read('../components/tool-switcher.tsx');
   assert.match(page, /ToolSwitcher/);
   assert.match(switcher, /role="tablist"/);
   assert.match(switcher, /role="tab"/);
   assert.match(switcher, /aria-selected/);
-  assert.match(switcher, /🔗/);
   assert.match(switcher, /Gerar link/);
-  assert.match(switcher, /🔔/);
   assert.match(switcher, /Alertas/);
   assert.match(switcher, /useState<Tool>\('links'\)/);
   assert.match(switcher, /role="tabpanel"/);
+  assert.match(switcher, /ArrowRight/);
+  assert.match(switcher, /ArrowLeft/);
+  assert.match(switcher, /Home/);
+  assert.match(switcher, /End/);
+  assert.doesNotMatch(switcher, /🔗|🔔/);
 });
 
-test('troca de ferramenta tem movimento sutil e respeita redução de movimento', async () => {
+test('troca de ferramenta mantém movimento sutil e respeita redução de movimento', async () => {
   const css = await read('../app/globals.css');
   assert.match(css, /@keyframes\s+panel-enter/i);
   assert.match(css, /animation:\s*panel-enter/i);
   assert.match(css, /@media\s*\(prefers-reduced-motion:\s*reduce\)/i);
 });
 
-test('gerador comunica conversão afiliada, lojas e fluxo em três passos', async () => {
+test('gerador prioriza linguagem direta e remove microcopy com cara de template', async () => {
   const generator = await read('../components/link-generator.tsx');
   const switcher = await read('../components/tool-switcher.tsx');
-  assert.match(generator, /Converter para meu link de afiliado/i);
+
+  assert.match(switcher, /Gerar link de afiliado/i);
+  assert.match(switcher, /Cole o link de uma loja compatível\./i);
+  assert.match(generator, /'Gerar link'/);
   assert.match(generator, /reconhecida/i);
-  assert.match(generator, /Seu link de afiliado está pronto/i);
-  assert.match(generator, /safe_to_publish|normalizePublicConversionResponse/);
-  assert.match(switcher, /Lojas compatíveis/i);
-  assert.match(switcher, /Como funciona/i);
-  assert.match(switcher, /Cole o link/i);
-  assert.match(switcher, /Nós convertemos/i);
-  assert.match(switcher, /Pronto para divulgar/i);
+  assert.match(generator, /Link gerado/i);
+  assert.match(generator, /Copiar link/i);
+  assert.match(generator, /Abrir produto/i);
+  assert.match(generator, /normalizePublicConversionResponse/);
+  assert.doesNotMatch(generator, /Só liberamos links validados/i);
+  assert.doesNotMatch(generator, /Validado para publicação/i);
+  assert.doesNotMatch(generator, /✅|🛍️|📋/);
+  assert.doesNotMatch(switcher, /Fluxo rápido|Compatibilidade/);
 });
 
-test('aba Alertas parece produto completo sem fingir backend ativo', async () => {
+test('marca e recentes evitam slogans concorrentes e pictogramas genéricos', async () => {
+  const brand = await read('../components/brand-mark.tsx');
+  const recent = await read('../components/recent-links.tsx');
+
+  assert.doesNotMatch(brand, /Games • Tech • Geek • Ofertas/);
+  assert.doesNotMatch(recent, /🛍️|🔗|✅/);
+  assert.match(recent, /Nenhum link gerado ainda/i);
+});
+
+test('camada editorial usa superfície sólida, verde só como acento e abas lineares', async () => {
+  const css = await read('../app/editorial-utility.css');
+  const layout = await read('../app/layout.tsx');
+
+  assert.match(layout, /editorial-utility\.css/);
+  assert.match(css, /--editorial-radius:\s*12px/);
+  assert.match(css, /\.tool-tab\.is-active/);
+  assert.match(css, /border-bottom/);
+  assert.match(css, /\.generate-button/);
+  assert.match(css, /background:\s*var\(--brand-green\)/);
+  assert.doesNotMatch(css, /linear-gradient|radial-gradient|filter:\s*blur/i);
+});
+
+test('aba Alertas permanece honesta sobre a integração sem excesso de badges ou emojis', async () => {
   const alerts = await read('../components/alerts-panel.tsx');
   assert.match(alerts, /Alertas de promoções/i);
   assert.match(alerts, /O que você quer monitorar\?/i);
@@ -125,30 +154,7 @@ test('aba Alertas parece produto completo sem fingir backend ativo', async () =>
   assert.match(alerts, /Filtros avançados/i);
   assert.match(alerts, /Seus alertas/i);
   assert.match(alerts, /Nenhum alerta criado ainda/i);
-  assert.match(alerts, /Integração Telegram:\s*em breve/i);
-  assert.doesNotMatch(alerts, /Prévia do módulo/i);
-  assert.doesNotMatch(alerts, /Em preparação/i);
+  assert.match(alerts, /Telegram/i);
+  assert.doesNotMatch(alerts, /🔔|Prévia do módulo|Monitoramento inteligente/i);
   assert.doesNotMatch(alerts, /fetch\(/);
-});
-
-test('UX task-first oferece navegação por teclado, microcopy de confiança e fluxo simplificado', async () => {
-  const switcher = await read('../components/tool-switcher.tsx');
-  const generator = await read('../components/link-generator.tsx');
-  const css = await read('../app/task-first.css');
-  const layout = await read('../app/layout.tsx');
-
-  assert.match(switcher, /task-primary/);
-  assert.match(switcher, /onKeyDown/);
-  assert.match(switcher, /ArrowRight/);
-  assert.match(switcher, /ArrowLeft/);
-  assert.match(switcher, /Home/);
-  assert.match(switcher, /End/);
-  assert.match(switcher, /Cole/i);
-  assert.match(switcher, /Convertemos/i);
-  assert.match(switcher, /Copie/i);
-  assert.match(generator, /Só liberamos links validados/i);
-  assert.match(generator, /Validado para publicação/i);
-  assert.match(css, /\.task-primary/);
-  assert.match(css, /\.task-assurance/);
-  assert.match(layout, /task-first\.css/);
 });
